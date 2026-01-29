@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Management</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background-color: #f5f5f5; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        h1 { color: #333; margin-bottom: 30px; text-align: center; }
+        h2 { color: #555; margin: 25px 0 15px 0; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
+        .nav { margin-bottom: 20px; text-align: center; }
+        .nav a { display: inline-block; margin: 0 10px; padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 4px; }
+        .nav a:hover { background-color: #0056b3; }
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        .product-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .product-card h3 { color: #333; margin-bottom: 10px; }
+        .product-type { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; margin-bottom: 10px; }
+        .physical { background-color: #e8f5e9; color: #2e7d32; }
+        .digital { background-color: #e3f2fd; color: #1565c0; }
+        .product-info { font-size: 14px; color: #666; margin: 8px 0; }
+        .price { font-size: 18px; font-weight: bold; color: #d32f2f; margin: 10px 0; }
+        .stock { font-size: 14px; }
+        .stock.low { color: #d32f2f; font-weight: bold; }
+        .stock.good { color: #2e7d32; font-weight: bold; }
+        .btn { display: inline-block; padding: 8px 15px; background-color: #007bff; color: white; text-decoration: none; border-radius: 4px; margin-top: 10px; }
+        .btn:hover { background-color: #0056b3; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📦 Inventory Management System</h1>
+        
+        <div class="nav">
+            <a href="{% url 'product_list' %}">Products</a>
+            <a href="{% url 'sql_queries' %}">SQL Queries</a>
+        </div>
+
+        <h2>Physical Products</h2>
+        {% if physical_products %}
+            <div class="products-grid">
+                {% for product in physical_products %}
+                    <div class="product-card">
+                        <span class="product-type physical">PHYSICAL</span>
+                        <h3>{{ product.name }}</h3>
+                        <p class="product-info">{{ product.description|truncatewords:10 }}</p>
+                        <p class="product-info"><strong>Category:</strong> {{ product.category }}</p>
+                        <p class="product-info"><strong>Weight:</strong> {{ product.weight }} kg</p>
+                        <p class="price">${{ product.base_price }}</p>
+                        <p class="stock {% if product.stock_quantity < 10 %}low{% else %}good{% endif %}">
+                            Stock: {{ product.stock_quantity }} units
+                        </p>
+                        <a href="{% url 'product_detail' product.pk %}" class="btn">View Details</a>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>No physical products available.</p>
+        {% endif %}
+
+        <h2>Digital Products</h2>
+        {% if digital_products %}
+            <div class="products-grid">
+                {% for product in digital_products %}
+                    <div class="product-card">
+                        <span class="product-type digital">DIGITAL</span>
+                        <h3>{{ product.name }}</h3>
+                        <p class="product-info">{{ product.description|truncatewords:10 }}</p>
+                        <p class="product-info"><strong>Category:</strong> {{ product.category }}</p>
+                        <p class="product-info"><strong>License:</strong> {{ product.get_license_type_display }}</p>
+                        <p class="price">${{ product.base_price }}</p>
+                        <p class="stock {% if product.stock_quantity < 10 %}low{% else %}good{% endif %}">
+                            Stock: {{ product.stock_quantity }} units
+                        </p>
+                        <a href="{% url 'product_detail' product.pk %}" class="btn">View Details</a>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>No digital products available.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

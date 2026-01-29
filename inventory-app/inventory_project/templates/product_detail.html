@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background-color: #f5f5f5; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        h1 { color: #333; margin-bottom: 20px; }
+        .nav { margin-bottom: 20px; }
+        .nav a { padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 4px; }
+        .nav a:hover { background-color: #0056b3; }
+        .product-detail { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .product-type { display: inline-block; padding: 5px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; margin-bottom: 15px; }
+        .physical { background-color: #e8f5e9; color: #2e7d32; }
+        .digital { background-color: #e3f2fd; color: #1565c0; }
+        .info-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; }
+        .info-row strong { color: #333; }
+        .price-section { background-color: #f9f9f9; padding: 15px; border-radius: 4px; margin: 20px 0; }
+        .final-price { font-size: 24px; font-weight: bold; color: #d32f2f; }
+        .discount-info { color: #2e7d32; font-size: 14px; margin-top: 10px; }
+        .alert { padding: 15px; background-color: #fff3cd; border: 1px solid #ffc107; border-radius: 4px; margin: 20px 0; color: #856404; }
+        .warning { padding: 15px; background-color: #f8d7da; border: 1px solid #f5c6cb; border-radius: 4px; margin: 20px 0; color: #721c24; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav">
+            <a href="{% url 'product_list' %}">← Back to Products</a>
+        </div>
+
+        <div class="product-detail">
+            {% if product.product_type == 'physical' %}
+                <span class="product-type physical">PHYSICAL PRODUCT</span>
+            {% else %}
+                <span class="product-type digital">DIGITAL PRODUCT</span>
+            {% endif %}
+
+            <h1>{{ product.name }}</h1>
+            
+            <div class="info-row">
+                <strong>Description:</strong>
+                <span>{{ product.description }}</span>
+            </div>
+
+            <div class="info-row">
+                <strong>Category:</strong>
+                <span>{{ product.category }}</span>
+            </div>
+
+            <div class="info-row">
+                <strong>Base Price:</strong>
+                <span>${{ base_price }}</span>
+            </div>
+
+            <div class="info-row">
+                <strong>Current Stock:</strong>
+                <span>{{ stock }} units</span>
+            </div>
+
+            {% if product.product_type == 'physical' %}
+                <div class="info-row">
+                    <strong>Weight:</strong>
+                    <span>{{ product.weight }} kg</span>
+                </div>
+                <div class="info-row">
+                    <strong>Dimensions:</strong>
+                    <span>{{ product.dimensions }}</span>
+                </div>
+            {% else %}
+                <div class="info-row">
+                    <strong>License Type:</strong>
+                    <span>{{ product.get_license_type_display }}</span>
+                </div>
+                <div class="info-row">
+                    <strong>File Size:</strong>
+                    <span>{{ product.file_size }} MB</span>
+                </div>
+            {% endif %}
+
+            <div class="price-section">
+                <div>Base Price: ${{ base_price }}</div>
+                {% if product.product_type == 'digital' %}
+                    <div class="discount-info">✓ Digital Product Discount: -15%</div>
+                {% endif %}
+                {% if stock > 50 %}
+                    <div class="discount-info">✓ High Stock Discount: -5% (additional)</div>
+                {% endif %}
+                <div class="final-price">Final Price: ${{ final_price }}</div>
+            </div>
+
+            {% if final_price < 5000 %}
+                <div class="warning">
+                    ⚠️ <strong>MARGIN REVIEW REQUIRED</strong><br>
+                    The final price (${{ final_price }}) is below $5,000. Please review the pricing strategy.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

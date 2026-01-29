@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQL Queries</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background-color: #f5f5f5; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        h1 { color: #333; margin-bottom: 30px; text-align: center; }
+        h2 { color: #555; margin: 25px 0 15px 0; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
+        .nav { margin-bottom: 20px; text-align: center; }
+        .nav a { display: inline-block; margin: 0 10px; padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 4px; }
+        .nav a:hover { background-color: #0056b3; }
+        .query-section { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th { background-color: #007bff; color: white; padding: 12px; text-align: left; font-weight: bold; }
+        td { padding: 12px; border-bottom: 1px solid #ddd; }
+        tr:hover { background-color: #f5f5f5; }
+        .no-data { color: #666; font-style: italic; padding: 20px; text-align: center; }
+        .alert { background-color: #fff3cd; border: 1px solid #ffc107; color: #856404; padding: 15px; border-radius: 4px; margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 SQL Queries Results</h1>
+        
+        <div class="nav">
+            <a href="{% url 'product_list' %}">← Back to Products</a>
+        </div>
+
+        <div class="query-section">
+            <h2>Query 1: Products with Stock < 10 Units</h2>
+            <div class="alert">
+                This query lists all products (both physical and digital) that have less than 10 units in stock.
+            </div>
+            {% if low_stock_products %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Product Name</th>
+                            <th>Stock Quantity</th>
+                            <th>Base Price</th>
+                            <th>Type</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in low_stock_products %}
+                            <tr>
+                                <td>{{ product.0 }}</td>
+                                <td>{{ product.1 }}</td>
+                                <td><strong style="color: #d32f2f;">{{ product.2 }}</strong></td>
+                                <td>${{ product.3 }}</td>
+                                <td>
+                                    {% if product.4 == 'physical' %}
+                                        <span style="background-color: #e8f5e9; padding: 4px 8px; border-radius: 4px;">Physical</span>
+                                    {% else %}
+                                        <span style="background-color: #e3f2fd; padding: 4px 8px; border-radius: 4px;">Digital</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="no-data">No products with stock less than 10 units.</p>
+            {% endif %}
+        </div>
+
+        <div class="query-section">
+            <h2>Query 2: Average Price by Category</h2>
+            <div class="alert">
+                This query calculates the average price and product count for each category.
+            </div>
+            {% if avg_by_category %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Average Price</th>
+                            <th>Product Count</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in avg_by_category %}
+                            <tr>
+                                <td>{{ row.0 }}</td>
+                                <td>${{ row.1 }}</td>
+                                <td>{{ row.2 }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="no-data">No category data available.</p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
